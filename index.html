@@ -275,6 +275,37 @@
             }
         }
 
+        /* 加载界面样式 */
+        #loading-screen {
+            transition: all 0.3s ease-in-out;
+        }
+
+        #progress-bar {
+            background: linear-gradient(90deg, #FF6B8B, #C955E8, #6A8FFF);
+            background-size: 200% 100%;
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .loading-heart {
+            animation: loadingHeartbeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes loadingHeartbeat {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            }
+            50% { 
+                transform: scale(1.1) rotate(5deg); 
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1));
+            }
+        }
+
         .volume-control {
             margin-top: 10px;
             display: flex;
@@ -313,6 +344,55 @@
     </style>
 </head>
 <body class="min-h-screen color-transition overflow-hidden relative">
+    <!-- 加载界面 -->
+    <div id="loading-screen" class="fixed inset-0 z-[9999] bg-gradient-to-br from-love-pink via-love-purple to-love-blue flex flex-col items-center justify-center">
+        <div class="text-center">
+            <!-- 加载动画 -->
+            <div class="mb-8">
+                <div class="loading-heart text-white text-8xl mb-4">
+                    <i class="fa fa-heart"></i>
+                </div>
+                <h1 class="font-romantic text-white text-3xl font-bold mb-2">七夕特别礼物</h1>
+                <p class="text-white/80 text-lg">正在准备浪漫时光...</p>
+            </div>
+            
+            <!-- 进度条容器 -->
+            <div class="w-80 bg-white/20 rounded-full h-3 mb-4 overflow-hidden backdrop-blur-sm">
+                <div id="progress-bar" class="h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+            
+            <!-- 进度文本 -->
+            <div class="text-white/90 font-medium">
+                <span id="progress-text">0%</span>
+                <span class="ml-2">资源加载中...</span>
+            </div>
+            
+            <!-- 加载详情 -->
+            <div id="loading-details" class="mt-6 text-white/70 text-sm bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="flex items-center">
+                        <i class="fa fa-image mr-2 text-love-pink"></i>
+                        图片资源
+                    </span>
+                    <span id="image-progress" class="text-love-pink font-bold">0/7</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="flex items-center">
+                        <i class="fa fa-music mr-2 text-love-pink"></i>
+                        音乐资源
+                    </span>
+                    <span id="music-progress" class="text-love-pink font-bold">0/4</span>
+                </div>
+                <!-- 跳过加载按钮 -->
+                <div class="mt-4 text-center">
+                    <button id="skip-loading" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full text-sm transition-colors duration-300">
+                        <i class="fa fa-forward mr-2"></i>跳过加载
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 音乐播放器 -->
     <div class="music-player">
         <div class="flex items-center gap-3">
@@ -449,11 +529,25 @@
         const volumeSlider = document.getElementById('volume-slider');
         const bgMusic = document.getElementById('bg-music');
         const musicTitle = document.getElementById('music-title');
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const loadingDetails = document.getElementById('loading-details');
+        const imageProgress = document.getElementById('image-progress');
+        const musicProgress = document.getElementById('music-progress');
+        const skipLoadingBtn = document.getElementById('skip-loading');
 
         // 音乐控制状态
         let isMusicPlaying = false;
         let currentMusicIndex = 0;
         let hasShownMusicTip = false;
+
+        // 资源加载状态
+        let loadedImages = 0;
+        let loadedMusic = 0;
+        let totalImages = 7;
+        let totalMusic = 4;
+        let isAllResourcesLoaded = false;
 
         // 音乐列表
         const musicList = [
@@ -462,6 +556,168 @@
             { id: 'romantic-music-2', title: 'A thousand miles', element: null },
             { id: 'romantic-music-3', title: 'Serenade In C,Op.48', element: null }
         ];
+
+        // 图片文件列表
+        const imageFiles = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg'];
+
+        // 预加载图片
+        function preloadImages() {
+            console.log('开始预加载图片...');
+            const promises = imageFiles.map((imageFile, index) => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    
+                    // 设置超时
+                    const timeout = setTimeout(() => {
+                        console.warn(`图片加载超时: ${imageFile}`);
+                        loadedImages++;
+                        updateLoadingProgress();
+                        resolve(null);
+                    }, 10000); // 10秒超时
+                    
+                    img.onload = () => {
+                        clearTimeout(timeout);
+                        console.log(`图片加载成功: ${imageFile}`);
+                        loadedImages++;
+                        updateLoadingProgress();
+                        resolve(img);
+                    };
+                    img.onerror = () => {
+                        clearTimeout(timeout);
+                        console.warn(`图片加载失败: ${imageFile}`);
+                        loadedImages++;
+                        updateLoadingProgress();
+                        resolve(null); // 即使失败也继续
+                    };
+                    img.src = imageFile;
+                });
+            });
+            return Promise.all(promises);
+        }
+
+        // 预加载音乐
+        function preloadMusic() {
+            console.log('开始预加载音乐...');
+            const promises = musicList.map((music, index) => {
+                return new Promise((resolve, reject) => {
+                    const audio = document.getElementById(music.id);
+                    if (audio) {
+                        // 设置超时
+                        const timeout = setTimeout(() => {
+                            console.warn(`音乐加载超时: ${music.title}`);
+                            loadedMusic++;
+                            updateLoadingProgress();
+                            resolve(null);
+                        }, 15000); // 15秒超时
+                        
+                        // 监听音乐加载事件
+                        const handleCanPlay = () => {
+                            clearTimeout(timeout);
+                            console.log(`音乐加载成功: ${music.title}`);
+                            loadedMusic++;
+                            updateLoadingProgress();
+                            audio.removeEventListener('canplaythrough', handleCanPlay);
+                            audio.removeEventListener('error', handleError);
+                            audio.removeEventListener('loadeddata', handleLoadedData);
+                            resolve(audio);
+                        };
+                        
+                        const handleError = () => {
+                            clearTimeout(timeout);
+                            console.warn(`音乐加载失败: ${music.title}`);
+                            loadedMusic++;
+                            updateLoadingProgress();
+                            audio.removeEventListener('canplaythrough', handleCanPlay);
+                            audio.removeEventListener('error', handleError);
+                            audio.removeEventListener('loadeddata', handleLoadedData);
+                            resolve(null); // 即使失败也继续
+                        };
+                        
+                        const handleLoadedData = () => {
+                            clearTimeout(timeout);
+                            console.log(`音乐数据加载成功: ${music.title}`);
+                            loadedMusic++;
+                            updateLoadingProgress();
+                            audio.removeEventListener('canplaythrough', handleCanPlay);
+                            audio.removeEventListener('error', handleError);
+                            audio.removeEventListener('loadeddata', handleLoadedData);
+                            resolve(audio);
+                        };
+                        
+                        audio.addEventListener('canplaythrough', handleCanPlay);
+                        audio.addEventListener('error', handleError);
+                        audio.addEventListener('loadeddata', handleLoadedData);
+                        
+                        // 尝试加载音乐
+                        try {
+                            audio.load();
+                        } catch (e) {
+                            console.warn(`音乐加载出错: ${music.title}`, e);
+                            clearTimeout(timeout);
+                            loadedMusic++;
+                            updateLoadingProgress();
+                            resolve(null);
+                        }
+                    } else {
+                        console.warn(`找不到音乐元素: ${music.id}`);
+                        loadedMusic++;
+                        updateLoadingProgress();
+                        resolve(null);
+                    }
+                });
+            });
+            return Promise.all(promises);
+        }
+
+        // 更新加载进度
+        function updateLoadingProgress() {
+            const totalProgress = ((loadedImages + loadedMusic) / (totalImages + totalMusic)) * 100;
+            
+            console.log(`更新进度: 图片 ${loadedImages}/${totalImages}, 音乐 ${loadedMusic}/${totalMusic}, 总计 ${Math.round(totalProgress)}%`);
+            
+            // 更新进度条
+            progressBar.style.width = `${totalProgress}%`;
+            progressText.textContent = `${Math.round(totalProgress)}%`;
+            
+            // 更新详细进度
+            imageProgress.textContent = `${loadedImages}/${totalImages}`;
+            musicProgress.textContent = `${loadedMusic}/${totalMusic}`;
+            
+            // 检查是否所有资源都加载完成
+            if (loadedImages >= totalImages && loadedMusic >= totalMusic && !isAllResourcesLoaded) {
+                console.log('所有资源加载完成，准备显示完成界面');
+                isAllResourcesLoaded = true;
+                showLoadingComplete();
+            }
+        }
+
+        // 显示加载完成提示
+        function showLoadingComplete() {
+            console.log('显示加载完成提示');
+            const progressText = document.getElementById('progress-text');
+            progressText.textContent = '100%';
+            progressText.nextElementSibling.textContent = '加载完成！';
+            
+            // 添加完成动画
+            const heart = document.querySelector('.loading-heart');
+            heart.style.animation = 'loadingHeartbeat 0.5s ease-in-out 3';
+            
+            setTimeout(() => {
+                hideLoadingScreen();
+            }, 1500); // 延迟1.5秒让用户看到完成状态
+        }
+
+        // 隐藏加载界面
+        function hideLoadingScreen() {
+            console.log('隐藏加载界面，开始游戏');
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                // 开始游戏
+                initGame();
+            }, 300);
+        }
 
         // 显示音乐提示
         function showMusicTip() {
@@ -719,7 +975,7 @@
             
             // 更新分数
             gameState.score++;
-            updateProgress();
+            updateGameProgress();
             
             // 检查是否达到目标
             if (gameState.score >= gameState.requiredScore) {
@@ -819,8 +1075,8 @@
             }, 1000);
         }
 
-        // 更新进度指示器
-        function updateProgress() {
+        // 更新游戏进度指示器
+        function updateGameProgress() {
             for (let i = 0; i < gameState.requiredScore; i++) {
                 const indicator = document.getElementById(`indicator-${i}`);
                 if (i < gameState.score) {
@@ -896,7 +1152,6 @@
         // 图片轮播功能
         let currentImageIndex = 0;
         let carouselInterval = null;
-        const imageFiles = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg'];
         
         function startImageCarousel() {
             const messageBg = document.querySelector('.message-bg');
@@ -973,7 +1228,7 @@
             }
             
             // 重置进度指示器
-            updateProgress();
+            updateGameProgress();
             
             // 重新开始动画
             animateHearts();
@@ -984,7 +1239,7 @@
         function initGame() {
             initProgressIndicators();
             createStars();
-            updateProgress();
+            updateGameProgress();
             
             // 开始动画和生成爱心
             animateHearts();
@@ -1013,7 +1268,75 @@
         }
 
         // 启动游戏
-        window.addEventListener('load', initGame);
+        window.addEventListener('load', () => {
+            // 绑定跳过加载按钮
+            skipLoadingBtn.addEventListener('click', () => {
+                console.log('用户手动跳过加载');
+                if (!isAllResourcesLoaded) {
+                    // 强制设置所有资源为已加载
+                    loadedImages = totalImages;
+                    loadedMusic = totalMusic;
+                    updateLoadingProgress();
+                    isAllResourcesLoaded = true;
+                    showLoadingComplete();
+                }
+            });
+            
+            // 开始加载资源
+            console.log('开始加载资源...');
+            
+            // 设置全局加载超时（30秒）
+            const loadingTimeout = setTimeout(() => {
+                console.warn('加载超时，强制显示界面');
+                if (!isAllResourcesLoaded) {
+                    isAllResourcesLoaded = true;
+                    showLoadingComplete();
+                }
+            }, 30000);
+            
+            // 设置强制完成定时器（10秒后强制完成）
+            const forceCompleteTimeout = setTimeout(() => {
+                console.warn('强制完成加载');
+                if (!isAllResourcesLoaded) {
+                    // 强制设置所有资源为已加载
+                    loadedImages = totalImages;
+                    loadedMusic = totalMusic;
+                    updateLoadingProgress();
+                    isAllResourcesLoaded = true;
+                    showLoadingComplete();
+                }
+            }, 10000);
+            
+            // 并行加载图片和音乐
+            Promise.all([
+                preloadImages(),
+                preloadMusic()
+            ]).then(([images, music]) => {
+                // 清除超时定时器
+                clearTimeout(loadingTimeout);
+                clearTimeout(forceCompleteTimeout);
+                
+                console.log('所有资源加载完成');
+                console.log('图片加载:', images.filter(img => img !== null).length, '/', totalImages);
+                console.log('音乐加载:', music.filter(audio => audio !== null).length, '/', totalMusic);
+                
+                // 资源加载完成，界面会自动显示
+                console.log('资源加载完成，等待界面显示');
+            }).catch(error => {
+                // 清除超时定时器
+                clearTimeout(loadingTimeout);
+                clearTimeout(forceCompleteTimeout);
+                
+                console.error('资源加载出错:', error);
+                // 出错时也显示界面
+                setTimeout(() => {
+                    if (!isAllResourcesLoaded) {
+                        isAllResourcesLoaded = true;
+                        showLoadingComplete();
+                    }
+                }, 2000);
+            });
+        });
     </script>
 </body>
 </html>
