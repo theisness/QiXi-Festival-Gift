@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七夕特别礼物</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        love: {
+                            pink: '#FF6B8B',
+                            red: '#FF3366',
+                            purple: '#C955E8',
+                            blue: '#6A8FFF'
+                        }
+                    },
+                    fontFamily: {
+                        romantic: ['Dancing Script', 'cursive', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(255, 51, 102, 0.5);
+            }
+            .heart-beat {
+                animation: heartbeat 1.5s ease-in-out infinite;
+            }
+            .float {
+                animation: float 6s ease-in-out infinite;
+            }
+            .glow {
+                filter: drop-shadow(0 0 8px rgba(255, 107, 139, 0.8));
+            }
+            .music-control {
+                animation: musicPulse 2s ease-in-out infinite;
+            }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes musicPulse {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .heart {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            will-change: transform, opacity;
+        }
+
+        .firework {
+            position: absolute;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .firework-particle {
+            position: absolute;
+            border-radius: 50%;
+            will-change: transform, opacity;
+        }
+
+        .message-appear {
+            animation: messageAppear 3s ease-out forwards;
+        }
+
+        @keyframes messageAppear {
+            0% { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.8);
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .color-transition {
+            animation: colorTransition 15s ease-in-out infinite;
+        }
+
+        @keyframes colorTransition {
+            0% { background-color: #FFF0F5; }
+            25% { background-color: #FFF5FA; }
+            50% { background-color: #F0F7FF; }
+            75% { background-color: #F5F0FF; }
+            100% { background-color: #FFF0F5; }
+        }
+
+        @keyframes blessingFloat {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            20% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(-50%, -100px) scale(1);
+            }
+        }
+
+        .message-bg {
+            background-image: url('2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .message-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.5) 100%);
+            border-radius: 1rem;
+        }
+
+        .message-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-bg {
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .carousel-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: scale(1.2);
+        }
+
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(255, 107, 139, 0.3);
+            border: 2px solid rgba(255, 107, 139, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255, 107, 139, 0.4);
+        }
+
+        .music-player.playing {
+            animation: musicGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes musicGlow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(255, 107, 139, 0.3); }
+            50% { box-shadow: 0 8px 32px rgba(255, 107, 139, 0.6), 0 0 20px rgba(255, 107, 139, 0.4); }
+        }
+
+        .music-control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B8B, #C955E8);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 107, 139, 0.6);
+        }
+
+        .music-control-btn.playing {
+            background: linear-gradient(135deg, #FF3366, #6A8FFF);
+            animation: musicPulse 2s ease-in-out infinite;
+        }
+
+        .music-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            margin-top: 8px;
+        }
+
+        .music-bar {
+            width: 3px;
+            height: 15px;
+            background: linear-gradient(to top, #FF6B8B, #C955E8);
+            border-radius: 2px;
+            animation: musicBar 1.5s ease-in-out infinite;
+        }
+
+        .music-bar:nth-child(1) { animation-delay: 0s; }
+        .music-bar:nth-child(2) { animation-delay: 0.1s; }
+        .music-bar:nth-child(3) { animation-delay: 0.2s; }
+        .music-bar:nth-child(4) { animation-delay: 0.3s; }
+        .music-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes musicBar {
+            0%, 100% { height: 15px; opacity: 0.6; }
+            50% { height: 25px; opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -8px, 0);
+            }
+            70% {
+                transform: translate3d(0, -4px, 0);
+            }
+            90% {
+                transform: translate3d(0, -2px, 0);
+            }
+        }
+
+        .volume-control {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 107, 139, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #FF6B8B;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #FF6B8B;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen color-transition overflow-hidden relative">
+    <!-- 音乐播放器 -->
+    <div class="music-player">
+        <div class="flex items-center gap-3">
+            <button id="music-toggle" class="music-control-btn" title="播放/暂停音乐">
+                <i class="fa fa-play"></i>
+            </button>
+            <button id="music-next" class="music-control-btn" style="width: 40px; height: 40px; font-size: 16px;" title="下一首音乐">
+                <i class="fa fa-forward"></i>
+            </button>
+        </div>
+        <div class="volume-control">
+            <i class="fa fa-volume-up text-love-pink text-sm"></i>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50" title="音量控制">
+        </div>
+        <div class="mt-2 text-center">
+            <span id="music-title" class="text-xs text-love-pink font-medium">Little temper</span>
+        </div>
+        <div class="music-visualizer">
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+        </div>
+    </div>
+
+    <!-- 背景音乐 -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="1.mp3" type="audio/wav">
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <!-- 备用浪漫音乐 -->
+    <audio id="romantic-music-1" loop preload="auto">
+        <source src="2.mp3" type="audio/wav">
+    </audio>
+    
+    <audio id="romantic-music-2" loop preload="auto">
+        <source src="3.mp3" type="audio/wav">
+    </audio>
+    
+    <audio id="romantic-music-3" loop preload="auto">
+        <source src="4.mp3" type="audio/wav">
+    </audio>
+
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 z-0 opacity-20">
+        <div class="absolute top-10 left-10 text-love-pink text-6xl heart-beat">
+            <i class="fa fa-heart"></i>
+        </div>
+        <div class="absolute top-20 right-20 text-love-red text-5xl heart-beat" style="animation-delay: 0.3s">
+            <i class="fa fa-heart"></i>
+        </div>
+        <div class="absolute bottom-40 left-20 text-love-purple text-4xl heart-beat" style="animation-delay: 0.6s">
+            <i class="fa fa-heart"></i>
+        </div>
+        <div class="absolute bottom-20 right-40 text-love-blue text-5xl heart-beat" style="animation-delay: 0.9s">
+            <i class="fa fa-heart"></i>
+        </div>
+    </div>
+
+    <!-- 星星装饰 -->
+    <div id="stars" class="fixed inset-0 z-0 pointer-events-none"></div>
+
+    <!-- 游戏标题 -->
+    <div class="relative z-10 text-center pt-10 md:pt-20">
+        <h1 class="font-romantic text-[clamp(2rem,5vw,3.5rem)] text-love-red font-bold text-shadow float">
+            给夫人的七夕心动挑战
+        </h1>
+        <p class="mt-4 text-gray-700 font-romantic text-[clamp(1.2rem,3vw,1.8rem)]">
+            点击飘落的爱心，收集7颗心动
+        </p>
+        <div class="mt-6 flex justify-center gap-2" id="progress-container">
+            <!-- 进度指示器将在这里动态生成 -->
+        </div>
+    </div>
+
+    <!-- 爱心容器 -->
+    <div id="hearts-container" class="relative w-full h-[60vh] overflow-hidden"></div>
+
+    <!-- 祝福信息 (默认隐藏) -->
+    <div id="message" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-1000">
+        <div class="message-bg rounded-2xl p-8 md:p-12 max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-1000 message-appear">
+            <div class="message-content text-center">
+                <div class="flex justify-center mb-6">
+                    <i class="fa fa-heart text-love-red text-5xl heart-beat"></i>
+                </div>
+                <h2 class="font-romantic text-[clamp(1.8rem,4vw,2.5rem)] text-love-purple mb-4">亲爱的宝贝</h2>
+                <p class="font-romantic text-[clamp(1.2rem,3vw,1.6rem)] text-gray-700 leading-relaxed mb-6">
+                    七夕快乐！<br>
+                    感谢你出现在我的生命里，<br>
+                    每一天有你的陪伴都是幸福的。<br>
+                    愿我们永远像天上的牛郎织女，<br>
+                    我爱你，不止七夕，而是朝朝夕夕。
+                </p>
+                <div class="mt-8">
+                    <button id="restart-btn" class="bg-love-pink hover:bg-love-red text-white font-romantic text-xl py-3 px-8 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform">
+                        再玩一次
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 轮播指示器 -->
+            <div class="carousel-indicator">
+                <div class="carousel-dot active" data-index="0"></div>
+                <div class="carousel-dot" data-index="1"></div>
+                <div class="carousel-dot" data-index="2"></div>
+                <div class="carousel-dot" data-index="3"></div>
+                <div class="carousel-dot" data-index="4"></div>
+                <div class="carousel-dot" data-index="5"></div>
+                <div class="carousel-dot" data-index="6"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        const gameState = {
+            score: 0,
+            requiredScore: 7,
+            isPlaying: true,
+            hearts: [],
+            animationFrameId: null
+        };
+
+        // DOM 元素
+        const heartsContainer = document.getElementById('hearts-container');
+        const progressContainer = document.getElementById('progress-container');
+        const message = document.getElementById('message');
+        const restartBtn = document.getElementById('restart-btn');
+        const starsContainer = document.getElementById('stars');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        const musicNextBtn = document.getElementById('music-next');
+        const volumeSlider = document.getElementById('volume-slider');
+        const bgMusic = document.getElementById('bg-music');
+        const musicTitle = document.getElementById('music-title');
+
+        // 音乐控制状态
+        let isMusicPlaying = false;
+        let currentMusicIndex = 0;
+        let hasShownMusicTip = false;
+
+        // 音乐列表
+        const musicList = [
+            { id: 'bg-music', title: 'Little temper', element: null },
+            { id: 'romantic-music-1', title: 'Love paradise', element: null },
+            { id: 'romantic-music-2', title: 'A thousand miles', element: null },
+            { id: 'romantic-music-3', title: 'Serenade In C,Op.48', element: null }
+        ];
+
+        // 显示音乐提示
+        function showMusicTip() {
+            if (hasShownMusicTip) return;
+            
+            const tip = document.createElement('div');
+            tip.className = 'fixed top-32 right-20 z-50 bg-gradient-to-r from-love-pink to-love-purple text-white px-4 py-2 rounded-full shadow-lg font-medium text-sm animate-bounce';
+            tip.innerHTML = '🎵 点击播放浪漫背景音乐 🎵';
+            tip.style.animation = 'bounce 2s infinite';
+            
+            document.body.appendChild(tip);
+            
+            // 3秒后自动隐藏提示
+            setTimeout(() => {
+                tip.style.opacity = '0';
+                tip.style.transform = 'translateY(-20px)';
+                setTimeout(() => tip.remove(), 300);
+            }, 3000);
+            
+            hasShownMusicTip = true;
+        }
+
+        // 初始化音乐控制
+        function initMusicControls() {
+            // 初始化音乐列表
+            musicList.forEach((music, index) => {
+                music.element = document.getElementById(music.id);
+                music.element.volume = volumeSlider.value / 100;
+                
+                // 添加音乐播放状态监听器
+                music.element.addEventListener('play', () => {
+                    if (index === currentMusicIndex) {
+                        musicToggleBtn.innerHTML = '<i class="fa fa-pause"></i>';
+                        musicToggleBtn.classList.add('playing');
+                        document.querySelector('.music-player').classList.add('playing');
+                        isMusicPlaying = true;
+                    }
+                });
+                
+                music.element.addEventListener('pause', () => {
+                    if (index === currentMusicIndex) {
+                        musicToggleBtn.innerHTML = '<i class="fa fa-play"></i>';
+                        musicToggleBtn.classList.remove('playing');
+                        document.querySelector('.music-player').classList.remove('playing');
+                        isMusicPlaying = false;
+                    }
+                });
+                
+                music.element.addEventListener('ended', () => {
+                    if (index === currentMusicIndex && isMusicPlaying) {
+                        // 音乐播放结束后自动切换到下一首
+                        nextMusic();
+                    }
+                });
+            });
+
+            musicToggleBtn.addEventListener('click', toggleMusic);
+            musicNextBtn.addEventListener('click', nextMusic);
+            volumeSlider.addEventListener('input', updateVolume);
+            
+            toggleMusic();
+            // 设置初始音量
+            updateVolume();
+            
+            // 自动播放音乐（需要用户交互）
+            document.addEventListener('click', function() {
+                if (isMusicPlaying && musicList[currentMusicIndex].element.paused) {
+                    musicList[currentMusicIndex].element.play().catch(e => console.log('自动播放失败:', e));
+                }
+            }, { once: true });
+            
+            updateMusicIcon();
+            updateMusicTitle();
+        }
+
+        // 切换音乐播放状态
+        function toggleMusic() {
+            const currentMusic = musicList[currentMusicIndex].element;
+            const musicPlayer = document.querySelector('.music-player');
+            
+            if (isMusicPlaying) {
+                currentMusic.pause();
+                musicToggleBtn.innerHTML = '<i class="fa fa-play"></i>';
+                musicToggleBtn.classList.remove('playing');
+                musicPlayer.classList.remove('playing');
+            } else {
+                currentMusic.play().catch(e => console.log('播放失败:', e));
+                musicToggleBtn.innerHTML = '<i class="fa fa-pause"></i>';
+                musicToggleBtn.classList.add('playing');
+                musicPlayer.classList.add('playing');
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // 切换到下一首音乐
+        function nextMusic() {
+            // 停止当前音乐
+            const currentMusic = musicList[currentMusicIndex].element;
+            currentMusic.pause();
+            currentMusic.currentTime = 0;
+            
+            // 切换到下一首
+            currentMusicIndex = (currentMusicIndex + 1) % musicList.length;
+            
+            // 如果正在播放，自动播放新音乐
+            if (isMusicPlaying) {
+                const newMusic = musicList[currentMusicIndex].element;
+                newMusic.play().catch(e => console.log('播放失败:', e));
+            }
+            
+            updateMusicTitle();
+        }
+
+        // 更新音量
+        function updateVolume() {
+            const volume = volumeSlider.value / 100;
+            
+            // 更新所有音乐的音量
+            musicList.forEach(music => {
+                if (music.element) {
+                    music.element.volume = volume;
+                }
+            });
+            
+            updateVolumeIcon(volume);
+        }
+
+        // 更新音量图标
+        function updateVolumeIcon(volume = null) {
+            if (volume === null) {
+                volume = musicList[currentMusicIndex].element.volume;
+            }
+            
+            const volumeIcon = document.querySelector('.volume-control i');
+            if (volume > 0.5) {
+                volumeIcon.className = 'fa fa-volume-up text-love-pink text-sm';
+            } else if (volume > 0) {
+                volumeIcon.className = 'fa fa-volume-down text-love-pink text-sm';
+            } else {
+                volumeIcon.className = 'fa fa-volume-off text-love-pink text-sm';
+            }
+        }
+
+        // 更新音乐标题
+        function updateMusicTitle() {
+            musicTitle.textContent = musicList[currentMusicIndex].title;
+        }
+
+        // 初始化进度指示器
+        function initProgressIndicators() {
+            progressContainer.innerHTML = '';
+            for (let i = 0; i < gameState.requiredScore; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'w-4 h-4 rounded-full border-2 border-love-pink/50';
+                indicator.id = `indicator-${i}`;
+                progressContainer.appendChild(indicator);
+            }
+        }
+
+        // 创建随机星星背景
+        function createStars() {
+            const starCount = 50;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 3 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const opacity = Math.random() * 0.8 + 0.2;
+                const delay = Math.random() * 5;
+                
+                star.className = 'absolute rounded-full bg-white animate-pulse';
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.opacity = opacity;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 创建爱心元素
+        function createHeart() {
+            if (!gameState.isPlaying) return;
+            
+            const heart = document.createElement('div');
+            const size = Math.random() * 30 + 20; // 20-50px
+            const left = Math.random() * (heartsContainer.offsetWidth - size);
+            const color = ['text-love-pink', 'text-love-red', 'text-love-purple', 'text-love-blue'][Math.floor(Math.random() * 4)];
+            
+            heart.className = `heart ${color} glow`;
+            heart.innerHTML = '<i class="fa fa-heart"></i>';
+            heart.style.fontSize = `${size}px`;
+            heart.style.left = `${left}px`;
+            heart.style.top = `-${size}px`;
+            
+            // 随机动画持续时间和旋转
+            const duration = Math.random() * 4 + 3; // 3-7秒
+            const rotation = Math.random() * 40 - 20; // -20到20度
+            
+            heart.dataset.speed = (Math.random() * 2 + 1).toString(); // 1-3的速度因子
+            heart.dataset.rotation = rotation.toString();
+            
+            // 添加点击事件
+            heart.addEventListener('click', () => handleHeartClick(heart));
+            
+            heartsContainer.appendChild(heart);
+            
+            // 存储爱心数据
+            gameState.hearts.push({
+                element: heart,
+                y: -size,
+                rotation: rotation,
+                speed: parseFloat(heart.dataset.speed)
+            });
+        }
+
+        // 7种祝福语
+        const blessings = [
+            "你最美",
+            "长长久久",
+            "共同进步",
+            "想你哦",
+            "最棒的",
+            "一起加油",
+            "幸福快乐"
+        ];
+
+        // 处理爱心点击
+        function handleHeartClick(heartElement) {
+            if (!gameState.isPlaying) return;
+            
+            // 找到对应的爱心数据并移除
+            const index = gameState.hearts.findIndex(h => h.element === heartElement);
+            if (index !== -1) {
+                gameState.hearts.splice(index, 1);
+            }
+            
+            // 获取点击位置
+            const rect = heartElement.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            
+            // 创建烟花效果
+            createFirework(x, y, heartElement.classList.contains('text-love-pink') ? '#FF6B8B' : 
+                          heartElement.classList.contains('text-love-red') ? '#FF3366' :
+                          heartElement.classList.contains('text-love-purple') ? '#C955E8' : '#6A8FFF');
+            
+            // 随机显示祝福语
+            showRandomBlessing(x, y);
+            
+            // 移除爱心元素
+            heartElement.remove();
+            
+            // 更新分数
+            gameState.score++;
+            updateProgress();
+            
+            // 检查是否达到目标
+            if (gameState.score >= gameState.requiredScore) {
+                endGame();
+            }
+        }
+        
+        // 祝福语不重复随机选择
+        let usedBlessings = [];
+        
+        // 显示随机祝福语
+        function showRandomBlessing(x, y) {
+            let blessing;
+            
+            // 如果所有祝福语都用过了，重新开始
+            if (usedBlessings.length >= blessings.length) {
+                usedBlessings = [];
+            }
+            
+            // 从未使用的祝福语中随机选择
+            const availableBlessings = blessings.filter(b => !usedBlessings.includes(b));
+            blessing = availableBlessings[Math.floor(Math.random() * availableBlessings.length)];
+            
+            // 标记为已使用
+            usedBlessings.push(blessing);
+            
+            // 创建祝福语元素
+            const blessingElement = document.createElement('div');
+            blessingElement.className = 'fixed z-50 pointer-events-none text-center';
+            blessingElement.style.left = `${x}px`;
+            blessingElement.style.top = `${y}px`;
+            blessingElement.style.transform = 'translate(-50%, -50%)';
+            
+            // 设置祝福语样式
+            blessingElement.innerHTML = `
+                <div class="bg-gradient-to-r from-love-pink to-love-purple text-white px-4 py-2 rounded-full shadow-lg font-romantic text-lg font-bold">
+                    ${blessing}
+                </div>
+            `;
+            
+            document.body.appendChild(blessingElement);
+            
+            // 添加动画效果
+            blessingElement.style.animation = 'blessingFloat 2s ease-out forwards';
+            
+            // 2秒后移除元素
+            setTimeout(() => {
+                blessingElement.remove();
+            }, 2000);
+        }
+
+        // 创建烟花效果
+        function createFirework(x, y, color) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = `${x}px`;
+            firework.style.top = `${y}px`;
+            document.body.appendChild(firework);
+            
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                
+                // 随机粒子大小
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机颜色，基于爱心颜色的变体
+                particle.style.backgroundColor = color;
+                
+                // 随机方向和距离
+                const angle = (i / particleCount) * Math.PI * 2;
+                const distance = Math.random() * 60 + 30;
+                
+                // 计算终点位置
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                
+                // 设置初始位置
+                particle.style.transform = 'translate(0, 0)';
+                
+                firework.appendChild(particle);
+                
+                // 动画效果
+                setTimeout(() => {
+                    particle.style.transition = 'all 0.6s cubic-bezier(0.1, 0.8, 0.9, 1)';
+                    particle.style.transform = `translate(${endX}px, ${endY}px)`;
+                    particle.style.opacity = '0';
+                }, 10);
+            }
+            
+            // 清理烟花元素
+            setTimeout(() => {
+                firework.remove();
+            }, 1000);
+        }
+
+        // 更新进度指示器
+        function updateProgress() {
+            for (let i = 0; i < gameState.requiredScore; i++) {
+                const indicator = document.getElementById(`indicator-${i}`);
+                if (i < gameState.score) {
+                    indicator.className = 'w-4 h-4 rounded-full bg-love-pink';
+                } else {
+                    indicator.className = 'w-4 h-4 rounded-full border-2 border-love-pink/50';
+                }
+            }
+        }
+
+        // 动画循环 - 让爱心下落
+        function animateHearts() {
+            const containerHeight = heartsContainer.offsetHeight;
+            
+            // 更新每个爱心的位置
+            gameState.hearts.forEach((heart, index) => {
+                heart.y += heart.speed;
+                heart.rotation += 0.5 * (heart.speed - 1); // 旋转速度基于下落速度
+                
+                heart.element.style.top = `${heart.y}px`;
+                heart.element.style.transform = `rotate(${heart.rotation}deg)`;
+                
+                // 移除超出容器的爱心
+                if (heart.y > containerHeight + 50) {
+                    heart.element.remove();
+                    gameState.hearts.splice(index, 1);
+                }
+            });
+            
+            // 继续动画循环
+            gameState.animationFrameId = requestAnimationFrame(animateHearts);
+        }
+
+        // 生成新爱心的间隔函数
+        function spawnHearts() {
+            if (gameState.isPlaying) {
+                createHeart();
+                // 随机间隔生成新爱心
+                setTimeout(spawnHearts, Math.random() * 1000 + 500);
+            }
+        }
+
+        // 结束游戏并显示祝福
+        function endGame() {
+            gameState.isPlaying = false;
+            
+            // 停止所有动画
+            if (gameState.animationFrameId) {
+                cancelAnimationFrame(gameState.animationFrameId);
+            }
+            
+            // 移除所有剩余爱心
+            gameState.hearts.forEach(heart => {
+                heart.element.remove();
+            });
+            gameState.hearts = [];
+            
+            // 显示祝福信息
+            setTimeout(() => {
+                message.style.opacity = '1';
+                message.style.pointerEvents = 'auto';
+                // 让信息卡片有弹出效果
+                const messageCard = message.querySelector('div');
+                setTimeout(() => {
+                    messageCard.classList.add('scale-100');
+                    messageCard.classList.remove('scale-95');
+                    // 启动图片轮播
+                    startImageCarousel();
+                }, 100);
+            }, 1000);
+        }
+
+        // 图片轮播功能
+        let currentImageIndex = 0;
+        let carouselInterval = null;
+        const imageFiles = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg'];
+        
+        function startImageCarousel() {
+            const messageBg = document.querySelector('.message-bg');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            // 清除之前的定时器
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+            }
+            
+            // 设置定时器，每2秒切换一次图片
+            carouselInterval = setInterval(() => {
+                currentImageIndex = (currentImageIndex + 1) % imageFiles.length;
+                updateCarouselImage(currentImageIndex);
+            }, 2000);
+            
+            // 初始化第一张图片
+            updateCarouselImage(0);
+        }
+        
+        function updateCarouselImage(index) {
+            const messageBg = document.querySelector('.message-bg');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            // 更新背景图片
+            messageBg.style.backgroundImage = `url('${imageFiles[index]}')`;
+            
+            // 更新指示器状态
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+            
+            currentImageIndex = index;
+        }
+        
+        // 为轮播指示器添加点击事件
+        function initCarouselControls() {
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    // 清除自动轮播
+                    if (carouselInterval) {
+                        clearInterval(carouselInterval);
+                    }
+                    
+                    // 切换到指定图片
+                    updateCarouselImage(index);
+                    
+                    // 重新开始自动轮播
+                    setTimeout(() => {
+                        startImageCarousel();
+                    }, 2000);
+                });
+            });
+        }
+        
+        // 重新开始游戏
+        function restartGame() {
+            // 重置游戏状态
+            gameState.score = 0;
+            gameState.isPlaying = true;
+            
+            // 隐藏祝福信息
+            message.style.opacity = '0';
+            message.style.pointerEvents = 'none';
+            const messageCard = message.querySelector('div');
+            messageCard.classList.remove('scale-100');
+            messageCard.classList.add('scale-95');
+            
+            // 停止轮播
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+                carouselInterval = null;
+            }
+            
+            // 重置进度指示器
+            updateProgress();
+            
+            // 重新开始动画
+            animateHearts();
+            spawnHearts();
+        }
+
+        // 初始化游戏
+        function initGame() {
+            initProgressIndicators();
+            createStars();
+            updateProgress();
+            
+            // 开始动画和生成爱心
+            animateHearts();
+            spawnHearts();
+            
+            // 绑定重新开始按钮事件
+            restartBtn.addEventListener('click', restartGame);
+            
+            // 初始化轮播控制
+            initCarouselControls();
+            
+            // 初始化音乐控制
+            initMusicControls();
+            
+            // 显示音乐提示
+            showMusicTip();
+            
+            // 窗口大小变化时重新计算位置
+            window.addEventListener('resize', () => {
+                // 清除现有爱心
+                gameState.hearts.forEach(heart => {
+                    heart.element.remove();
+                });
+                gameState.hearts = [];
+            });
+        }
+
+        // 启动游戏
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
+    
