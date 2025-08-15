@@ -113,6 +113,95 @@
             100% { background-color: #FFF0F5; }
         }
 
+        /* 美轮美奂的动态背景 */
+        .beautiful-bg {
+            background: linear-gradient(-45deg, #ff6b8b, #c955e8, #6a8fff, #ff8e53, #ff6b8b);
+            background-size: 400% 400%;
+            animation: beautifulGradient 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .beautiful-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 139, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(201, 85, 232, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(106, 143, 255, 0.3) 0%, transparent 50%);
+            animation: beautifulGlow 6s ease-in-out infinite alternate;
+        }
+
+        .beautiful-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: beautifulShine 4s ease-in-out infinite;
+        }
+
+        @keyframes beautifulGradient {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes beautifulGlow {
+            0% { 
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            100% { 
+                opacity: 0.6;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes beautifulShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* 浮动粒子效果 */
+        .floating-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle 8s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(0vh) scale(0);
+            }
+        }
+
         @keyframes blessingFloat {
             0% { 
                 opacity: 0;
@@ -408,7 +497,7 @@
             <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50" title="音量控制">
         </div>
         <div class="mt-2 text-center">
-            <span id="music-title" class="text-xs text-love-pink font-medium">Little temper</span>
+            <span id="music-title" class="text-xs text-love-pink font-medium">Love paradise</span>
         </div>
         <div class="music-visualizer">
             <div class="music-bar"></div>
@@ -473,14 +562,16 @@
     <!-- 爱心容器 -->
     <div id="hearts-container" class="relative w-full h-[60vh] overflow-hidden"></div>
 
-    <!-- 祝福信息 (默认隐藏) -->
-    <div id="message" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-1000">
-        <div class="message-bg rounded-2xl p-8 md:p-12 max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-1000 message-appear">
+         <!-- 祝福信息 (默认隐藏) -->
+     <div id="message" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-1000">
+         <!-- 美轮美奂的背景 -->
+         <div class="beautiful-bg absolute inset-0"></div>
+                 <div class="message-bg rounded-2xl p-8 md:p-12 max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-1000 message-appear relative z-10" style="box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 107, 139, 0.2);">
             <div class="message-content text-center">
                 <div class="flex justify-center mb-6">
                     <i class="fa fa-heart text-love-red text-5xl heart-beat"></i>
                 </div>
-                <h2 class="font-romantic text-[clamp(1.8rem,4vw,2.5rem)] text-love-purple mb-4">亲爱的宝贝</h2>
+                                 <h2 class="font-romantic text-[clamp(1.8rem,4vw,2.5rem)] text-love-purple mb-4" style="text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(201, 85, 232, 0.5);">亲爱的宝贝</h2>
                 <p class="font-romantic text-[clamp(1.2rem,3vw,1.6rem)] text-gray-700 leading-relaxed mb-6">
                     七夕快乐！<br>
                     感谢你出现在我的生命里，<br>
@@ -489,9 +580,9 @@
                     我爱你，不止七夕，而是朝朝夕夕。
                 </p>
                 <div class="mt-8">
-                    <button id="restart-btn" class="bg-love-pink hover:bg-love-red text-white font-romantic text-xl py-3 px-8 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform">
-                        再玩一次
-                    </button>
+                                         <button id="restart-btn" class="bg-love-pink hover:bg-love-red text-white font-romantic text-xl py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105" style="box-shadow: 0 8px 25px rgba(255, 107, 139, 0.4), 0 0 20px rgba(255, 107, 139, 0.2);">
+                         再玩一次
+                     </button>
                 </div>
             </div>
             
@@ -551,8 +642,8 @@
 
         // 音乐列表
         const musicList = [
-            { id: 'bg-music', title: 'Little temper', element: null },
-            { id: 'romantic-music-1', title: 'Love paradise', element: null },
+            { id: 'bg-music', title: 'Love paradise', element: null },
+            { id: 'romantic-music-1', title: 'Little temper', element: null },
             { id: 'romantic-music-2', title: 'A thousand miles', element: null },
             { id: 'romantic-music-3', title: 'Serenade In C,Op.48', element: null }
         ];
@@ -951,6 +1042,17 @@
         function handleHeartClick(heartElement) {
             if (!gameState.isPlaying) return;
             
+                    // 播放tap.mp3
+        try {
+            const audio = new Audio('tap.mp3');
+            audio.volume = 0.5; // 设置音量为50%
+            audio.play().catch(error => {
+                console.log('音频播放失败:', error);
+            });
+        } catch (error) {
+            console.log('音频创建失败:', error);
+        }
+
             // 找到对应的爱心数据并移除
             const index = gameState.hearts.findIndex(h => h.element === heartElement);
             if (index !== -1) {
@@ -1119,35 +1221,37 @@
             }
         }
 
-        // 结束游戏并显示祝福
-        function endGame() {
-            gameState.isPlaying = false;
-            
-            // 停止所有动画
-            if (gameState.animationFrameId) {
-                cancelAnimationFrame(gameState.animationFrameId);
-            }
-            
-            // 移除所有剩余爱心
-            gameState.hearts.forEach(heart => {
-                heart.element.remove();
-            });
-            gameState.hearts = [];
-            
-            // 显示祝福信息
-            setTimeout(() => {
-                message.style.opacity = '1';
-                message.style.pointerEvents = 'auto';
-                // 让信息卡片有弹出效果
-                const messageCard = message.querySelector('div');
-                setTimeout(() => {
-                    messageCard.classList.add('scale-100');
-                    messageCard.classList.remove('scale-95');
-                    // 启动图片轮播
-                    startImageCarousel();
-                }, 100);
-            }, 1000);
-        }
+                 // 结束游戏并显示祝福
+         function endGame() {
+             gameState.isPlaying = false;
+             
+             // 停止所有动画
+             if (gameState.animationFrameId) {
+                 cancelAnimationFrame(gameState.animationFrameId);
+             }
+             
+             // 移除所有剩余爱心
+             gameState.hearts.forEach(heart => {
+                 heart.element.remove();
+             });
+             gameState.hearts = [];
+             
+             // 显示祝福信息
+             setTimeout(() => {
+                 message.style.opacity = '1';
+                 message.style.pointerEvents = 'auto';
+                 // 让信息卡片有弹出效果
+                 const messageCard = message.querySelector('div');
+                 setTimeout(() => {
+                     messageCard.classList.add('scale-100');
+                     messageCard.classList.remove('scale-95');
+                     // 启动图片轮播
+                     startImageCarousel();
+                     // 启动美轮美奂的背景效果
+                     startBeautifulBackground();
+                 }, 100);
+             }, 1000);
+         }
 
         // 图片轮播功能
         let currentImageIndex = 0;
@@ -1208,38 +1312,115 @@
             });
         }
         
-        // 重新开始游戏
-        function restartGame() {
-            // 重置游戏状态
-            gameState.score = 0;
-            gameState.isPlaying = true;
-            
-            // 隐藏祝福信息
-            message.style.opacity = '0';
-            message.style.pointerEvents = 'none';
-            const messageCard = message.querySelector('div');
-            messageCard.classList.remove('scale-100');
-            messageCard.classList.add('scale-95');
-            
-            // 停止轮播
-            if (carouselInterval) {
-                clearInterval(carouselInterval);
-                carouselInterval = null;
-            }
-            
-            // 重置进度指示器
-            updateGameProgress();
-            
-            // 重新开始动画
-            animateHearts();
-            spawnHearts();
-        }
+                 // 美轮美奂的背景效果
+         let beautifulBackgroundInterval = null;
+         
+         function startBeautifulBackground() {
+             // 清除之前的定时器
+             if (beautifulBackgroundInterval) {
+                 clearInterval(beautifulBackgroundInterval);
+             }
+             
+             // 创建浮动粒子
+             createFloatingParticles();
+             
+             // 每3秒创建新的粒子
+             beautifulBackgroundInterval = setInterval(createFloatingParticles, 3000);
+         }
+         
+         function createFloatingParticles() {
+             const messageContainer = document.getElementById('message');
+             const particleCount = Math.floor(Math.random() * 5) + 3; // 3-7个粒子
+             
+             for (let i = 0; i < particleCount; i++) {
+                 const particle = document.createElement('div');
+                 particle.className = 'floating-particle';
+                 
+                 // 随机位置
+                 const left = Math.random() * 100;
+                 const delay = Math.random() * 8;
+                 
+                 particle.style.left = `${left}%`;
+                 particle.style.animationDelay = `${delay}s`;
+                 
+                 messageContainer.appendChild(particle);
+                 
+                 // 8秒后移除粒子
+                 setTimeout(() => {
+                     if (particle.parentNode) {
+                         particle.remove();
+                     }
+                 }, 8000);
+             }
+         }
+         
+         function stopBeautifulBackground() {
+             if (beautifulBackgroundInterval) {
+                 clearInterval(beautifulBackgroundInterval);
+                 beautifulBackgroundInterval = null;
+             }
+             
+             // 移除所有浮动粒子
+             const particles = document.querySelectorAll('.floating-particle');
+             particles.forEach(particle => particle.remove());
+         }
+         
+         // 重新开始游戏
+         function restartGame() {
+             // 重置游戏状态
+             gameState.score = 0;
+             gameState.isPlaying = true;
+             
+             // 隐藏祝福信息
+             message.style.opacity = '0';
+             message.style.pointerEvents = 'none';
+             const messageCard = message.querySelector('div');
+             messageCard.classList.remove('scale-100');
+             messageCard.classList.add('scale-95');
+             
+             // 停止轮播
+             if (carouselInterval) {
+                 clearInterval(carouselInterval);
+                 carouselInterval = null;
+             }
+             
+             // 停止美轮美奂背景效果
+             stopBeautifulBackground();
+             
+             // 重置进度指示器
+             updateGameProgress();
+             
+             // 重新开始动画
+             animateHearts();
+             spawnHearts();
+         }
 
+         // 显示音乐提示
+        function showMusicTip() {
+            if (hasShownMusicTip) return;
+            
+            const tip = document.createElement('div');
+            tip.className = 'fixed top-32 right-40 z-50 bg-gradient-to-r from-love-pink to-love-purple text-white px-4 py-2 rounded-full shadow-lg font-medium text-sm animate-bounce';
+            tip.innerHTML = '🎵 点击播放浪漫背景音乐 🎵';
+            tip.style.animation = 'bounce 2s infinite';
+            
+            document.body.appendChild(tip);
+            
+            // 3秒后自动隐藏提示
+            setTimeout(() => {
+                tip.style.opacity = '0';
+                tip.style.transform = 'translateY(-100px)';
+                setTimeout(() => tip.remove(), 300);
+            }, 3000);
+            
+            hasShownMusicTip = true;
+        }
         // 初始化游戏
         function initGame() {
             initProgressIndicators();
             createStars();
             updateGameProgress();
+            showMusicTip();
             
             // 开始动画和生成爱心
             animateHearts();
