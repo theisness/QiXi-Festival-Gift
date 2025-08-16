@@ -135,6 +135,19 @@ function preloadMusic() {
             }
         });
     });
+    promises.push(new Promise((resolve, reject) => {
+        // 加载tap.mp3
+        const tapAudio = new Audio('music/tap.mp3');
+        tapAudio.addEventListener('canplaythrough', () => {
+            console.log('tap.mp3 加载成功');
+            resolve(tapAudio);
+        });
+        tapAudio.addEventListener('error', () => {
+            console.warn('tap.mp3 加载失败');
+            resolve(null);
+        });
+        tapAudio.load();
+    }))
     return Promise.all(promises);
 }
 
@@ -349,7 +362,7 @@ function createStars() {
         const opacity = Math.random() * 0.8 + 0.2;
         const delay = Math.random() * 5;
 
-        star.className = 'absolute rounded-full bg-white animate-pulse';
+        star.className = 'star-element';
         star.style.width = `${size}px`;
         star.style.height = `${size}px`;
         star.style.left = `${left}%`;
@@ -613,7 +626,7 @@ function endGame() {
         // 让信息卡片有弹出效果
         const messageCard = message.querySelector('div');
         setTimeout(() => {
-            messageCard.classList.add('scale-100');
+            messageCard.classList.add('message-card-scale-100');
             messageCard.classList.remove('scale-95');
             // 启动图片轮播
             startImageCarousel();
@@ -700,18 +713,18 @@ function startBeautifulBackground() {
 
 function createFloatingParticles() {
     const messageContainer = document.getElementById('message');
-    const particleCount = Math.floor(Math.random() * 5) + 3; // 3-7个粒子
+    const particleCount = Math.floor(Math.random() * 6) + 3; // 创建随机个数
 
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        particle.className = 'floating-particle';
-
+        particle.className = 'floating-particle-element';
+        // 随机延迟
+        const delay = Math.random() * 1000; // 0-1秒
+        particle.style.animationDelay = `${delay}ms`;
         // 随机位置
         const left = Math.random() * 100;
-        const delay = Math.random() * 8;
 
         particle.style.left = `${left}%`;
-        particle.style.animationDelay = `${delay}s`;
 
         messageContainer.appendChild(particle);
 

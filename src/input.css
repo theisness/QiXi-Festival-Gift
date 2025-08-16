@@ -133,6 +133,10 @@
     @apply absolute w-1 h-1 bg-white/80 rounded-full pointer-events-none;
     animation: floatParticle 8s linear infinite;
   }
+
+  .message-card-scale-100 {
+    @apply scale-100;
+  }
 }
 
 .heart {
@@ -391,10 +395,50 @@
     transition: all 0.3s ease;
 }
 
-.music-player:hover {
+/* 移动端响应式设计 */
+@media (max-width: 768px) {
+    .music-player {
+        bottom: 20px;
+        top: auto;
+        right: 5px;
+        /* right: 50%; */
+        transform: translateX(50%) scale(0.8);
+        padding: 10px;
+        border-radius: 40px;
+        transform: scale(0.5);
+    }
+}
+
+@media (max-width: 480px) {
+    .music-player {
+        bottom: 15px;
+        top: auto;
+        right: 5px;
+        /* right: 50%; */
+        transform: translateX(50%) scale(0.7);
+        padding: 8px;
+        border-radius: 35px;
+        transform: scale(0.5);
+    }
+}
+
+/* .music-player:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 40px rgba(255, 107, 139, 0.4);
+} */
+
+/* 移动端hover效果调整 */
+/* @media (max-width: 768px) {
+    .music-player:hover {
+        transform: translateX(50%) scale(0.8) translateY(-2px);
+    }
 }
+
+@media (max-width: 480px) {
+    .music-player:hover {
+        transform: translateX(50%) scale(0.7) translateY(-2px);
+    }
+} */
 
 .music-player.playing {
     animation: musicGlow 2s ease-in-out infinite;

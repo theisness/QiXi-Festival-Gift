@@ -601,6 +601,23 @@ video {
 
 /* 星星样式 */
 
+.star-element {
+  position: absolute;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.star-element {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
 /* 爱心样式 */
 
 /* 祝福语样式 */
@@ -608,6 +625,22 @@ video {
 /* 烟花样式 */
 
 /* 浮动粒子样式 */
+
+.floating-particle-element {
+  pointer-events: none;
+  position: absolute;
+  height: 0.25rem;
+  width: 0.25rem;
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 0.8);
+  animation: floatParticle 8s linear infinite;
+}
+
+.message-card-scale-100 {
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
 
 .pointer-events-none {
   pointer-events: none;
@@ -782,16 +815,6 @@ video {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-@keyframes pulse {
-  50% {
-    opacity: .5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
 .cursor-not-allowed {
   cursor: not-allowed;
 }
@@ -851,11 +874,6 @@ video {
 .bg-love-pink {
   --tw-bg-opacity: 1;
   background-color: rgb(255 107 139 / var(--tw-bg-opacity, 1));
-}
-
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
 .bg-white\/10 {
@@ -1453,10 +1471,52 @@ video {
   transition: all 0.3s ease;
 }
 
-.music-player:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(255, 107, 139, 0.4);
+/* 移动端响应式设计 */
+
+@media (max-width: 768px) {
+  .music-player {
+    bottom: 20px;
+    top: auto;
+    right: 5px;
+    /* right: 50%; */
+    transform: translateX(50%) scale(0.8);
+    padding: 10px;
+    border-radius: 40px;
+    transform: scale(0.5);
+  }
 }
+
+@media (max-width: 480px) {
+  .music-player {
+    bottom: 15px;
+    top: auto;
+    right: 5px;
+    /* right: 50%; */
+    transform: translateX(50%) scale(0.7);
+    padding: 8px;
+    border-radius: 35px;
+    transform: scale(0.5);
+  }
+}
+
+/* .music-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255, 107, 139, 0.4);
+} */
+
+/* 移动端hover效果调整 */
+
+/* @media (max-width: 768px) {
+    .music-player:hover {
+        transform: translateX(50%) scale(0.8) translateY(-2px);
+    }
+}
+
+@media (max-width: 480px) {
+    .music-player:hover {
+        transform: translateX(50%) scale(0.7) translateY(-2px);
+    }
+} */
 
 .music-player.playing {
   animation: musicGlow 2s ease-in-out infinite;
