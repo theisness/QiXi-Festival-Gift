@@ -24,7 +24,7 @@ const progressText = document.getElementById('progress-text');
 const loadingDetails = document.getElementById('loading-details');
 const imageProgress = document.getElementById('image-progress');
 const musicProgress = document.getElementById('music-progress');
-const skipLoadingBtn = document.getElementById('skip-loading');
+const startGameBtn = document.getElementById('start-game');
 
 // 音乐控制状态
 let isMusicPlaying = false;
@@ -56,23 +56,13 @@ function preloadImages() {
         return new Promise((resolve, reject) => {
             const img = new Image();
 
-            // 设置超时
-            const timeout = setTimeout(() => {
-                console.warn(`图片加载超时: ${imageFile}`);
-                loadedImages++;
-                updateLoadingProgress();
-                resolve(null);
-            }, 10000); // 10秒超时
-
             img.onload = () => {
-                clearTimeout(timeout);
                 console.log(`图片加载成功: ${imageFile}`);
                 loadedImages++;
                 updateLoadingProgress();
                 resolve(img);
             };
             img.onerror = () => {
-                clearTimeout(timeout);
                 console.warn(`图片加载失败: ${imageFile}`);
                 loadedImages++;
                 updateLoadingProgress();
@@ -91,17 +81,9 @@ function preloadMusic() {
         return new Promise((resolve, reject) => {
             const audio = document.getElementById(music.id);
             if (audio) {
-                // 设置超时
-                const timeout = setTimeout(() => {
-                    console.warn(`音乐加载超时: ${music.title}`);
-                    loadedMusic++;
-                    updateLoadingProgress();
-                    resolve(null);
-                }, 15000); // 15秒超时
 
                 // 监听音乐加载事件
                 const handleCanPlay = () => {
-                    clearTimeout(timeout);
                     console.log(`音乐加载成功: ${music.title}`);
                     loadedMusic++;
                     updateLoadingProgress();
@@ -112,7 +94,6 @@ function preloadMusic() {
                 };
 
                 const handleError = () => {
-                    clearTimeout(timeout);
                     console.warn(`音乐加载失败: ${music.title}`);
                     loadedMusic++;
                     updateLoadingProgress();
@@ -123,7 +104,7 @@ function preloadMusic() {
                 };
 
                 const handleLoadedData = () => {
-                    clearTimeout(timeout);
+                    // clearTimeout(timeout);
                     console.log(`音乐数据加载成功: ${music.title}`);
                     loadedMusic++;
                     updateLoadingProgress();
@@ -142,7 +123,6 @@ function preloadMusic() {
                     audio.load();
                 } catch (e) {
                     console.warn(`音乐加载出错: ${music.title}`, e);
-                    clearTimeout(timeout);
                     loadedMusic++;
                     updateLoadingProgress();
                     resolve(null);
@@ -191,9 +171,13 @@ function showLoadingComplete() {
     const heart = document.querySelector('.loading-heart');
     heart.style.animation = 'loadingHeartbeat 0.5s ease-in-out 3';
 
+    // 启用开始游戏按钮
     setTimeout(() => {
-        hideLoadingScreen();
-    }, 1500); // 延迟1.5秒让用户看到完成状态
+        startGameBtn.disabled = false;
+        startGameBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        startGameBtn.classList.add('hover:bg-white/40');
+        startGameBtn.innerHTML = '<i class="fa fa-play mr-2"></i>开始游戏';
+    }, 1000);
 }
 
 // 隐藏加载界面
@@ -206,27 +190,6 @@ function hideLoadingScreen() {
         // 开始游戏
         initGame();
     }, 300);
-}
-
-// 显示音乐提示
-function showMusicTip() {
-    if (hasShownMusicTip) return;
-
-    const tip = document.createElement('div');
-    tip.className = 'fixed top-32 right-20 z-50 bg-gradient-to-r from-love-pink to-love-purple text-white px-4 py-2 rounded-full shadow-lg font-medium text-sm animate-bounce';
-    tip.innerHTML = '🎵 点击播放浪漫背景音乐 🎵';
-    tip.style.animation = 'bounce 2s infinite';
-
-    document.body.appendChild(tip);
-
-    // 3秒后自动隐藏提示
-    setTimeout(() => {
-        tip.style.opacity = '0';
-        tip.style.transform = 'translateY(-20px)';
-        setTimeout(() => tip.remove(), 300);
-    }, 3000);
-
-    hasShownMusicTip = true;
 }
 
 // 初始化音乐控制
@@ -267,17 +230,11 @@ function initMusicControls() {
     musicNextBtn.addEventListener('click', nextMusic);
     volumeSlider.addEventListener('input', updateVolume);
 
-    toggleMusic();
     // 设置初始音量
     updateVolume();
 
-    // 自动播放音乐（需要用户交互）
-    document.addEventListener('click', function () {
-        if (isMusicPlaying && musicList[currentMusicIndex].element.paused) {
-            musicList[currentMusicIndex].element.play().catch(e => console.log('自动播放失败:', e));
-        }
-    }, {once: true});
-
+    // 初始化音乐状态为暂停
+    isMusicPlaying = false;
     updateMusicIcon();
     updateMusicTitle();
 }
@@ -813,17 +770,17 @@ function showMusicTip() {
     if (hasShownMusicTip) return;
 
     const tip = document.createElement('div');
-    tip.className = 'fixed top-32 right-40 z-50 bg-gradient-to-r from-love-pink to-love-purple text-white px-4 py-2 rounded-full shadow-lg font-medium text-sm animate-bounce';
-    tip.innerHTML = '🎵 点击播放浪漫背景音乐 🎵';
+    tip.className = 'tip-style';
+    tip.innerHTML = '🎵 点击按钮播放、切换浪漫背景音乐 🎵';
     tip.style.animation = 'bounce 2s infinite';
 
     document.body.appendChild(tip);
 
     // 3秒后自动隐藏提示
     setTimeout(() => {
+        tip.style.transition = 'opacity 0.5s, transform 0.5s';
         tip.style.opacity = '0';
-        tip.style.transform = 'translateY(-100px)';
-        setTimeout(() => tip.remove(), 300);
+        setTimeout(() => tip.remove(), 3000);
     }, 3000);
 
     hasShownMusicTip = true;
@@ -834,7 +791,6 @@ function initGame() {
     initProgressIndicators();
     createStars();
     updateGameProgress();
-    showMusicTip();
 
     // 开始动画和生成爱心
     animateHearts();
@@ -864,43 +820,23 @@ function initGame() {
 
 // 启动游戏
 window.addEventListener('load', () => {
-    // 绑定跳过加载按钮
-    skipLoadingBtn.addEventListener('click', () => {
-        console.log('用户手动跳过加载');
-        if (!isAllResourcesLoaded) {
-            // 强制设置所有资源为已加载
-            loadedImages = totalImages;
-            loadedMusic = totalMusic;
-            updateLoadingProgress();
-            isAllResourcesLoaded = true;
-            showLoadingComplete();
+    // 绑定开始游戏按钮
+    startGameBtn.addEventListener('click', () => {
+        console.log('用户点击开始游戏');
+        if (isAllResourcesLoaded) {
+            // 隐藏加载界面并开始游戏
+            hideLoadingScreen();
+            // 自动播放音乐
+            setTimeout(() => {
+                if (!isMusicPlaying) {
+                    toggleMusic();
+                }
+            }, 500);
         }
     });
 
     // 开始加载资源
     console.log('开始加载资源...');
-
-    // 设置全局加载超时（30秒）
-    const loadingTimeout = setTimeout(() => {
-        console.warn('加载超时，强制显示界面');
-        if (!isAllResourcesLoaded) {
-            isAllResourcesLoaded = true;
-            showLoadingComplete();
-        }
-    }, 30000);
-
-    // 设置强制完成定时器（10秒后强制完成）
-    const forceCompleteTimeout = setTimeout(() => {
-        console.warn('强制完成加载');
-        if (!isAllResourcesLoaded) {
-            // 强制设置所有资源为已加载
-            loadedImages = totalImages;
-            loadedMusic = totalMusic;
-            updateLoadingProgress();
-            isAllResourcesLoaded = true;
-            showLoadingComplete();
-        }
-    }, 10000);
 
     // 并行加载图片和音乐
     Promise.all([
@@ -908,8 +844,6 @@ window.addEventListener('load', () => {
         preloadMusic()
     ]).then(([images, music]) => {
         // 清除超时定时器
-        clearTimeout(loadingTimeout);
-        clearTimeout(forceCompleteTimeout);
 
         console.log('所有资源加载完成');
         console.log('图片加载:', images.filter(img => img !== null).length, '/', totalImages);
@@ -918,9 +852,6 @@ window.addEventListener('load', () => {
         // 资源加载完成，界面会自动显示
         console.log('资源加载完成，等待界面显示');
     }).catch(error => {
-        // 清除超时定时器
-        clearTimeout(loadingTimeout);
-        clearTimeout(forceCompleteTimeout);
 
         console.error('资源加载出错:', error);
         // 出错时也显示界面
