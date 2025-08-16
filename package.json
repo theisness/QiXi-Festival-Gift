@@ -1,0 +1,22 @@
+{
+  "name": "qixi-festival-gift",
+  "version": "1.0.0",
+  "description": "A romantic Qixi Festival gift website",
+  "main": "index.html",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "keywords": [
+    "qixi",
+    "festival",
+    "gift",
+    "romantic"
+  ],
+  "author": "",
+  "license": "MIT"
+}
